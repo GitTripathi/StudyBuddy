@@ -34,12 +34,40 @@ def get_embeddings():
 def build_index(pdf_bytes):
     with tempfile.NamedTemporaryFile(suffix=".pdf", delete=False) as f:
         f.write(pdf_bytes)
-    pages = PyPDFLoader(f.name).load()                       # 1. read PDF
-    splitter = RecursiveCharacterTextSplitter(chunk_size=800, chunk_overlap=100)
-    chunks = splitter.split_documents(pages)                 # 2. split into chunks
-    return FAISS.from_documents(chunks, get_embeddings())    # 3. embed + store in FAISS
+        temp_path = f.name
 
+    try:
+        pages = PyPDFLoader(temp_path).load()
 
+        # Remove empty pages
+        pages = [
+            page for page in pages
+            if page.page_content and page.page_content.strip()
+        ]
+
+        if not pages:
+            raise ValueError(
+                "No readable text found in PDF. "
+                "Please upload a text-based PDF."
+            )
+
+        splitter = RecursiveCharacterTextSplitter(
+            chunk_size=800,
+            chunk_overlap=100
+        )
+
+        chunks = splitter.split_documents(pages)
+
+        if not chunks:
+            raise ValueError("No text chunks generated from PDF.")
+
+        return FAISS.from_documents(
+            chunks,
+            get_embeddings()
+        )
+
+    finally:
+        os.remove(temp_path)
 # ---------- Step 2: calculator (safe, no eval) ----------
 OPS = {ast.Add: op.add, ast.Sub: op.sub, ast.Mult: op.mul, ast.Div: op.truediv, ast.Pow: op.pow}
 
