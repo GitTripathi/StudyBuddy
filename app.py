@@ -28,6 +28,11 @@ MODEL = st.secrets.get(
     "GEMINI_MODEL",
     os.getenv("GEMINI_MODEL", "gemini-3.8-flash")
 )
+SYSTEM = (
+    "You are StudyBuddy, a study assistant. For questions about the user's notes, "
+    "call search_notes and answer ONLY from what it returns. If the notes do not "
+    "contain the answer, say so. Use calculator for any maths."
+)
 
 # ---------- Step 1: RAG (turn the PDF into a searchable index) ----------
 @st.cache_resource
