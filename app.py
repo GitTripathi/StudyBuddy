@@ -18,7 +18,7 @@ from langchain_huggingface import HuggingFaceEmbeddings
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 
 load_dotenv()
-MODEL = os.getenv("GEMINI_MODEL", "gemini-2.5-flash")
+MODEL = os.getenv("GEMINI_MODEL", "gemini-3.8-flash")
 SYSTEM = (
     "You are StudyBuddy, a study assistant. For questions about the user's notes, "
     "call search_notes and answer ONLY from what it returns. If the notes do not "
