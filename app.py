@@ -18,11 +18,15 @@ from langchain_huggingface import HuggingFaceEmbeddings
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 
 load_dotenv()
-MODEL = os.getenv("GEMINI_MODEL", "gemini-3.8-flash")
-SYSTEM = (
-    "You are StudyBuddy, a study assistant. For questions about the user's notes, "
-    "call search_notes and answer ONLY from what it returns. If the notes do not "
-    "contain the answer, say so. Use calculator for any maths."
+
+# Load API key from Streamlit Secrets
+if "GOOGLE_API_KEY" in st.secrets:
+    os.environ["GOOGLE_API_KEY"] = st.secrets["GOOGLE_API_KEY"]
+
+# Load Gemini model from Streamlit Secrets
+MODEL = st.secrets.get(
+    "GEMINI_MODEL",
+    os.getenv("GEMINI_MODEL", "gemini-3.8-flash")
 )
 
 # ---------- Step 1: RAG (turn the PDF into a searchable index) ----------
